@@ -5,7 +5,7 @@ export default class Board extends Component {
 
     calculateWinner = (squares) => {
 
-        console.log('array',squares)
+        console.log('array', squares)
 
         const lines = [
             [0, 1, 2],
@@ -23,8 +23,14 @@ export default class Board extends Component {
             const [a, b, c] = lines[i];
 
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                
-                return prompt("you win");
+
+                if (squares[a] === 'X') {
+                    return prompt("x win");
+                } else {
+                    return prompt("O win")
+                }
+
+
             }
         }
         return null;
