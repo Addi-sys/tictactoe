@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react'
+import Board from './components/Board'
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      userName: "Slim Shady",
+      nextPlayer: true,
+      squareList: ['', '', '', '', '', '', '', '', ''],
+      isClickList: [false, false, false, false, false, false, false, false, false]
+    }
+  }
+
+  setParentsState = (obj) => {
+    this.setState(obj)
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>tictactoe</h1>
+        <h3>username = {this.state.userName}</h3>
+
+        <Board
+          squareList={this.state.squareList}
+          setParentsState={this.setParentsState}
+          nextPlayer={this.state.nextPlayer}
+          isClickList={this.state.isClickList}
+        />
+
+        <ol>history</ol>
+        <ol>ranking</ol>
+
+      </div>
+    )
+  }
 }
 
-export default App;
