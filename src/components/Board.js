@@ -24,12 +24,7 @@ export default class Board extends Component {
 
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
 
-                if (squares[a] === 'X') {
-                    return prompt("x win");
-                } else {
-                    return prompt("O win")
-                }
-
+                return squares[a]
 
             }
         }
@@ -39,7 +34,9 @@ export default class Board extends Component {
 
     selectSquare = (id) => {
 
-        let array = this.props.squareList
+        let array = this.props.squareList.slice()
+        let gameOverValue = this.props.gameOver
+        let historyArray = this.props.history
 
         if (array[id] !== "") {
             return alert("Pick Again!")
@@ -47,14 +44,32 @@ export default class Board extends Component {
 
         array[id] = this.props.nextPlayer ? "X" : "O"
 
-        this.calculateWinner(array)
+        let winnerValue = this.calculateWinner(array)
 
-        this.props.setParentsState({ squareList: array, nextPlayer: !this.props.nextPlayer })
+        if (winnerValue == null && !array.includes('')) {
+            gameOverValue = !gameOverValue
+        }
+
+        historyArray.push({squares: array, nextPlayer: !this.props.nextPlayer})
+        console.log('squarelist',this.props.squareList)
+
+        this.props.setParentsState({
+            squareList: array,
+            nextPlayer: !this.props.nextPlayer,
+            winner: winnerValue,
+            gameOver: gameOverValue,
+            history: historyArray,
+        })
+
     }
     render() {
         return (
             <div>
                 <h4>next player = {this.props.nextPlayer ? "X" : "O"}</h4>
+                <h3>{this.props.gameOver === true
+                    ? `Game Over`
+                    : `winner is ${this.props.winner}`}
+                </h3>
 
                 <div style={{ display: 'flex' }}>
                     <Square
