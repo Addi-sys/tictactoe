@@ -1,31 +1,49 @@
 import React, { Component } from 'react'
 import Board from './components/Board'
 import './App.css';
+import { Container } from 'react-bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import FacebookLogin from 'react-facebook-login';
-import GoogleLogin from 'react-google-login';
 
 export default class extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      userName: "Slim Shady",
+      isLogin: false,
+      userName: "",
       nextPlayer: true,
       squareList: ['', '', '', '', '', '', '', '', ''],
       isClickList: [false, false, false, false, false, false, false, false, false],
       winner: "",
       gameOver: false,
       history: [],
+      timeLimit: 30,
+      playerScore: 0,
     }
   }
 
-
   responseFacebook = (response) => {
+
+    this.setState({ isLogin: true, userName: response.name })
+
     console.log(response);
   }
 
-  responseGoogle = (response) => {
-    console.log(response);
+  sendData = async () => {
+    let data = new URLSearchParams();
+    data.append("player", this.state.userName);
+    data.append("score", "TIME_ELAPSED_IN_SECONDS");
+    const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: data.toString(),
+      json: true
+    });
+    console.log(response)
   }
 
   backToPast = (index) => {
@@ -40,42 +58,33 @@ export default class extends Component {
   }
 
   render() {
-    return (
-      <div>
 
-        <h1>LOGIN WITH FACEBOOK AND GOOGLE</h1>
+    if (!this.state.isLogin) {
+      return (
 
         <FacebookLogin
-          appId="354415365571254" //APP ID NOT CREATED YET
+          autoLoad={true}
+          appId="897601730732358"
           fields="name,email,picture"
-          scope="public_profile,email"
-          onlogin="checkLoginState();"
           callback={this.responseFacebook}
         />
-        <br />
-        <br />
 
+      )
+    }
 
-        <GoogleLogin
-          clientId="" //CLIENTID NOT CREATED YET
-          buttonText="LOGIN WITH GOOGLE"
-          onSuccess={this.responseGoogle}
-          onFailure={this.responseGoogle}
-        />
+    return (
+      <div className='body'>
+
 
         <h1>tictactoe</h1>
         <h3>username = {this.state.userName}</h3>
 
-        <Board
-          squareList={this.state.squareList}
-          setParentsState={this.setParentsState}
-          // nextPlayer={this.state.nextPlayer}
-          // isClickList={this.state.isClickList}
-          // winner={this.state.winner}
-          // gameOver={this.state.gameOver}
-          // history={this.state.history}
-          {...this.state}
-        />
+        <Container>
+          <Board
+            setParentsState={this.setParentsState}
+            {...this.state}
+          />
+        </Container>
 
         <ol>history</ol>
         {this.state.history.map((_, index) => {
